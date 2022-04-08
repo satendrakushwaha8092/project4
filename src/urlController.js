@@ -36,10 +36,10 @@ const urlCreate = async function (req, res) {  //
     const data = req.body // destructure the longUrl from req.body.longUr
     if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "please enter long url" })
     if (!(data.longUrl)) return res.status(400).send({ status: false, msg: "longUrl is required" })
-    if (await GET_ASYNC(`${data.longUrl}`)) {
-      let data = JSON.parse(await GET_ASYNC(`${req.body.longUrl}`))
-      return res.status(302).send({ status: true, msg:{longUrl: data.longUrl, shortUrl: data.shortUrl, urlCode:data.urlCode }, redis: "found in radius" })
-    }
+    // if (await GET_ASYNC(`${data.longUrl}`)) {
+    //   let data = JSON.parse(await GET_ASYNC(`${req.body.longUrl}`))
+    //   return res.status(302).send({ status: true, msg:{longUrl: data.longUrl, shortUrl: data.shortUrl, urlCode:data.urlCode }, redis: "found in radius" })
+    // }
     let url = await UrlModel.findOne({ longUrl: req.body.longUrl }).select({ longurl: 1, shortUrl: 1, urlCode: 1 })
     if (url) {
       return res.status(200).send({ status: true, msg: url, url: "found in db" })
@@ -52,9 +52,9 @@ const urlCreate = async function (req, res) {  //
       data.urlCode = urlCode
       //invoking the Url model and saving to the DB
       //console.log(data)
-      let redis = await SET_ASYNC(`${data.longUrl}`, JSON.stringify(data))
-      let dt = JSON.parse(redis)
-      console.log(dt)
+      // let redis = await SET_ASYNC(`${data.longUrl}`, JSON.stringify(data))
+      // let dt = JSON.parse(redis)
+      // console.log(dt)
 
       let url = await UrlModel.create(data)
       res.status(201).send({ status: true, msg: { longUrl: url.longUrl, shortUrl: url.shortUrl, urlCode: url.urlCode } })
